@@ -34,19 +34,34 @@ public class MultibinderApplication {
 		SpringApplication.run(MultibinderApplication.class, args);
 	}
 
-	@Bean
-	public Function<String, String> process() {
-		return payload -> payload.toUpperCase();
-	}
-
-	static class TestProducer {
+	static class TestProducerOldSystem {
 
 		private AtomicBoolean semaphore = new AtomicBoolean(true);
 
 		@Bean
-		public Supplier<String> sendTestData() {
-			return () -> this.semaphore.getAndSet(!this.semaphore.get()) ? "foo" : "bar";
+		public Supplier<String> sendTestDataOldSystem() {
+			return () -> this.semaphore.getAndSet(!this.semaphore.get()) ? "fooKafka" : "barKafka";
 		}
+	}
+
+	static class TestProducerNewSystem {
+
+		private AtomicBoolean semaphore = new AtomicBoolean(true);
+
+		@Bean
+		public Supplier<String> sendTestDataNewSystem() {
+			return () -> this.semaphore.getAndSet(!this.semaphore.get()) ? "fooRabbit" : "barRabbit";
+		}
+	}
+
+	@Bean
+	public Function<String, String> processOldSystem() {
+		return payload -> payload.toUpperCase();
+	}
+
+	@Bean
+	public Function<String, String> processNewSystem() {
+		return processOldSystem();
 	}
 
 	static class TestConsumer {

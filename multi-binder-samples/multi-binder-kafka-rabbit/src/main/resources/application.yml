@@ -2,20 +2,34 @@ spring:
   cloud:
     stream:
       bindings:
-        process-in-0:
+
+        # This represents your existing in-house system processor
+        processOldSystem-in-0:
           destination: dataIn
           binder: kafka
-        process-out-0:
+        processOldSystem-out-0:
           destination: dataOut
           binder: rabbit
+
+        # This represents your new (Pulsar custom binder) system processor
+        processNewSystem-in-0:
+          destination: dataIn
+          binder: rabbit
+        processNewSystem-out-0:
+          destination: dataOut
+          binder: rabbit
+
         #Test sink binding (used for testing)
-        sendTestData-out-0:
+        sendTestDataOldSystem-out-0:
           destination: dataIn
           binder: kafka
+        sendTestDataNewSystem-out-0:
+          destination: dataIn
+          binder: rabbit
         #Test sink binding (used for testing)
         receive-in-0:
           destination: dataOut
           binder: rabbit
-      function:
-        definition: sendTestData;process;receive
 
+      function:
+        definition: sendTestDataOldSystem;sendTestDataNewSystem;processOldSystem;processNewSystem;receive
